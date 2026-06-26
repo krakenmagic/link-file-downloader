@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
 <meta charset="utf-8">
 <style>
@@ -17,20 +17,20 @@
 </style>
 </head>
 <body>
-  <div class="hd">リンク一括ダウンローダー</div>
-  <div class="sub">ページ上のリンクからファイルをまとめて取得します。</div>
+  <div class="hd" id="t-hd"></div>
+  <div class="sub" id="t-sub"></div>
   <div class="btns">
-    <button id="selection">📝 選択範囲から取得
-      <span class="d">ページ上でテキストを選択してからクリック</span>
+    <button id="selection"><span id="t-sel-title"></span>
+      <span class="d" id="t-sel-desc"></span>
     </button>
-    <button id="picker">🎯 要素を選んで取得
-      <span class="d">クリックでブロックを指定し、その中のリンクを収集</span>
+    <button id="picker"><span id="t-pick-title"></span>
+      <span class="d" id="t-pick-desc"></span>
     </button>
-    <button id="help" class="ghost">❓ 使い方を見る
-      <span class="d">操作方法・保存先設定のマニュアル</span>
+    <button id="help" class="ghost"><span id="t-help-title"></span>
+      <span class="d" id="t-help-desc"></span>
     </button>
   </div>
-  <div class="note">結果は右上のパネルに表示。チェックして保存。</div>
+  <div class="note" id="t-note"></div>
   <script src="popup.js"></script>
 </body>
 </html>

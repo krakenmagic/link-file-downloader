@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
 <meta charset="utf-8">
-<title>リンク一括ダウンローダー — 使い方</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リンク一括ダウンローダー — 使い方 / How to use</title>
 <style>
   :root { --blue:#1f6feb; --bg:#f6f8fb; --ink:#1a1a1a; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
     font: 15px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; }
-  .container { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
-  header { background: var(--blue); color: #fff; padding: 28px 20px; }
-  header .inner { max-width: 760px; margin: 0 auto; }
-  header h1 { margin: 0; font-size: 22px; }
-  header p { margin: 6px 0 0; opacity: .9; font-size: 14px; }
-  h2 { font-size: 18px; margin: 34px 0 12px; padding-bottom: 6px;
-    border-bottom: 2px solid #e2e8f3; }
+  header { background: var(--blue); color: #fff; padding: 24px 20px; }
+  header .inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  header h1 { margin: 0; font-size: 22px; flex: 1; }
+  .lang { display: flex; gap: 6px; }
+  .lang button { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.5);
+    border-radius: 6px; padding: 4px 10px; font-size: 13px; cursor: pointer; }
+  .lang button.on { background: #fff; color: var(--blue); font-weight: 700; }
+  .container { max-width: 760px; margin: 0 auto; padding: 24px 20px 80px; }
+  h2 { font-size: 18px; margin: 30px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e2e8f3; }
   .card { background: #fff; border: 1px solid #e6eaf2; border-radius: 12px;
-    padding: 18px 20px; margin: 14px 0; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
-  ol, ul { margin: 8px 0; padding-left: 22px; }
-  li { margin: 5px 0; }
+    padding: 16px 20px; margin: 14px 0; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  ol, ul { margin: 8px 0; padding-left: 22px; } li { margin: 5px 0; }
   .badge { display: inline-block; background: #eef2ff; color: var(--blue);
     font-weight: 700; border-radius: 6px; padding: 1px 8px; font-size: 13px; }
   .tip { background: #fff8e6; border: 1px solid #ffe2a8; border-left: 5px solid #f5b50a;
     border-radius: 8px; padding: 16px 18px; margin: 14px 0; }
   .tip h3 { margin: 0 0 8px; font-size: 16px; color: #9a6b00; }
-  .warn { background: #fff0f0; border: 1px solid #ffd0d0; border-left: 5px solid #e25555; }
-  .warn h3 { color: #b02a2a; }
   code, .path { background: #eef1f6; border-radius: 5px; padding: 1px 6px;
     font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
   .step-no { display:inline-flex; width: 22px; height: 22px; border-radius: 50%;
@@ -34,73 +34,132 @@
   .kbd { background:#fff; border:1px solid #ccc; border-bottom-width:2px;
     border-radius:5px; padding:1px 7px; font-size:12px; font-family:ui-monospace,monospace; }
   .muted { color:#777; font-size:13px; }
-  a { color: var(--blue); }
+  .doc { display: none; } .doc.show { display: block; }
 </style>
 </head>
 <body>
 <header>
   <div class="inner">
     <h1>リンク一括ダウンローダー</h1>
-    <p>選択範囲・指定要素内のリンクから、PDFなどのファイルをまとめて保存</p>
+    <div class="lang">
+      <button data-l="ja">日本語</button>
+      <button data-l="en">English</button>
+    </div>
   </div>
 </header>
 
-<div class="container">
-
+<!-- ============ 日本語 ============ -->
+<div class="container doc" id="doc-ja">
   <h2>基本の使い方</h2>
   <div class="card">
     ツールバーの拡張アイコンをクリックすると、2つのモードが出ます。
     <ol>
       <li><span class="badge">📝 選択範囲から取得</span><br>
-        先にページ上でリンクを含む範囲を<b>ドラッグ選択</b>してから、このボタンを押します。選択範囲内のリンクだけを集めます。</li>
+        先にページ上でリンクを含む範囲を<b>ドラッグ選択</b>してから押します。選択範囲内のリンクだけを集めます。</li>
       <li><span class="badge">🎯 要素を選んで取得</span><br>
-        押すとピッカーが起動。マウスを乗せると要素が青くハイライトされ、<b>クリック</b>でその要素（ブロック）内の全リンクを集めます。<span class="kbd">Esc</span> でキャンセル。</li>
+        押すとピッカーが起動。マウスを乗せると要素が青くハイライトされ、<b>クリック</b>でその中の全リンクを集めます。<span class="kbd">Esc</span> でキャンセル。</li>
     </ol>
-    集めた結果は画面<b>右上のパネル</b>に一覧表示されます。
+    集めた結果は<b>右上のパネル</b>に表示されます。
   </div>
 
   <h2>パネルの操作</h2>
   <div class="card">
     <ul>
-      <li><b>ファイルのみ</b> … pdf / zip / docx / jpg などの既知ファイルだけ表示（オフで全リンク表示）</li>
-      <li><b>拡張子で絞込</b> … <code>pdf,zip</code> のように入力するとその種類だけに絞れます</li>
-      <li><b>全選択 / 解除</b>、各行のチェックで保存対象を調整</li>
-      <li>パネル上部の青いバーを<b>ドラッグ</b>で移動できます</li>
+      <li><b>ファイルのみ</b> … pdf / zip / docx / jpg などの既知ファイルだけ表示</li>
+      <li><b>拡張子で絞込</b> … <code>pdf,zip</code> のように入力で絞り込み</li>
+      <li><b>全選択 / 解除</b>、各行のチェックで対象を調整。上部の青いバーを<b>ドラッグ</b>で移動</li>
     </ul>
   </div>
 
   <h2>2つの保存方法</h2>
   <div class="card">
-    <p><span class="step-no">A</span><b>ZIPでまとめて</b><br>
-      選んだファイルを1つのZIPにまとめて保存します。<b>保存ダイアログは1回だけ</b>。フォルダを1度選べば全部そこに入ります。</p>
-    <p><span class="step-no">B</span><b>個別に保存</b><br>
-      ダイアログを出さず、<span class="path">ダウンロード/link-downloader/</span> フォルダへ直接流し込みます。</p>
+    <p><span class="step-no">A</span><b>ZIPでまとめて</b> … 選んだファイルを1つのZIPにまとめて保存。<b>保存ダイアログは1回だけ</b>。</p>
+    <p><span class="step-no">B</span><b>個別に保存</b> … ダイアログを出さず <span class="path">ダウンロード/link-downloader/</span> へ直接保存。</p>
   </div>
 
-  <div class="tip warn">
+  <div class="tip">
     <h3>⚠️「個別に保存」で毎回ダイアログが出てしまうとき</h3>
-    <p>Chrome本体の設定で「保存場所を毎回確認する」がオンになっています。これは拡張側から変更できないため、<b>一度だけChrome設定でオフ</b>にしてください。</p>
+    <p>Chrome本体の「保存場所を毎回確認する」がオンです。拡張側からは変えられないため、<b>一度だけChrome設定でオフ</b>にしてください。</p>
     <ol>
-      <li>アドレスバーに <code>chrome://settings/downloads</code> と入力して開く<br>
-        <span class="muted">（または ︙メニュー → 設定 → ダウンロード）</span></li>
-      <li><b>「ダウンロード前に各ファイルの保存場所を確認する」</b> のスイッチを <b>オフ</b> にする</li>
-      <li>必要なら「保存先」を好きなフォルダに設定</li>
+      <li>アドレスバーに <code>chrome://settings/downloads</code> を入力して開く</li>
+      <li><b>「ダウンロード前に各ファイルの保存場所を確認する」</b> を <b>オフ</b> にする</li>
     </ol>
-    <p>以降は「個別に保存」を押すと、確認なしで <span class="path">ダウンロード/link-downloader/</span> に自動で入ります。</p>
-    <p class="muted">※ ZIP保存だけは仕様上ダイアログが1回出ます（保存先を選べるようにするため）。毎回同じ場所で良ければ上記設定オフで省略できます。</p>
+    <p>以降は確認なしで <span class="path">ダウンロード/link-downloader/</span> に入ります。</p>
   </div>
 
   <h2>うまくいかないとき</h2>
   <div class="card">
     <ul>
-      <li><b>リンクが0件</b> … そのページのリンクが <code>&lt;a href&gt;</code> ではなくJSボタンの可能性。別の範囲・要素を試してください。</li>
-      <li><b>ZIPが「全件取得失敗」</b> … ログイン必須・Referer必須のファイルは拡張のfetchがブロックされることがあります。その場合は<b>「個別に保存」</b>の方が成功しやすいです（ブラウザのCookieが効くため）。</li>
-      <li><b>大量・大容量</b> … ZIP化が重いときは選択を分割するか、個別保存を使ってください。</li>
+      <li><b>リンクが0件</b> … リンクが <code>&lt;a href&gt;</code> でなくJSボタンの可能性。別の範囲・要素を試す。</li>
+      <li><b>ZIPが「全件取得失敗」</b> … ログイン必須・Referer必須のファイルは取得不可のことがある。<b>「個別に保存」</b>の方が成功しやすい。</li>
       <li><span class="path">chrome://</span> やChrome Web Storeなど特別なページでは動作しません。</li>
     </ul>
   </div>
-
-  <p class="muted" style="margin-top:30px">リンク一括ダウンローダー v1.1 — 開発者モードで読み込み済みのローカル拡張です。</p>
 </div>
+
+<!-- ============ English ============ -->
+<div class="container doc" id="doc-en">
+  <h2>Getting started</h2>
+  <div class="card">
+    Click the extension icon in the toolbar to see two modes.
+    <ol>
+      <li><span class="badge">📝 From selection</span><br>
+        First <b>drag-select</b> a range that contains links on the page, then click this. Only links inside the selection are collected.</li>
+      <li><span class="badge">🎯 Pick an element</span><br>
+        Starts a picker. Hover to highlight an element in blue, then <b>click</b> to collect all links inside it. Press <span class="kbd">Esc</span> to cancel.</li>
+    </ol>
+    Results appear in the <b>top-right panel</b>.
+  </div>
+
+  <h2>Panel controls</h2>
+  <div class="card">
+    <ul>
+      <li><b>Files only</b> — show known files only (pdf / zip / docx / jpg …)</li>
+      <li><b>Filter by ext</b> — type like <code>pdf,zip</code> to narrow down</li>
+      <li><b>All / None</b> and per-row checkboxes to choose items. Drag the blue top bar to move the panel.</li>
+    </ul>
+  </div>
+
+  <h2>Two ways to save</h2>
+  <div class="card">
+    <p><span class="step-no">A</span><b>Download as ZIP</b> — bundle the selected files into a single ZIP. <b>Only one save dialog.</b></p>
+    <p><span class="step-no">B</span><b>Save individually</b> — no dialog; saved straight into <span class="path">Downloads/link-downloader/</span>.</p>
+  </div>
+
+  <div class="tip">
+    <h3>⚠️ If "Save individually" still asks every time</h3>
+    <p>Chrome's "Ask where to save each file" setting is on. The extension can't change it, so turn it off <b>once</b> in Chrome settings.</p>
+    <ol>
+      <li>Open <code>chrome://settings/downloads</code> in the address bar</li>
+      <li>Turn <b>off</b> "Ask where to save each file before downloading"</li>
+    </ol>
+    <p>After that, files go into <span class="path">Downloads/link-downloader/</span> with no prompt.</p>
+  </div>
+
+  <h2>Troubleshooting</h2>
+  <div class="card">
+    <ul>
+      <li><b>0 links</b> — the links may be JS buttons, not <code>&lt;a href&gt;</code>. Try a different range or element.</li>
+      <li><b>ZIP "all unreachable"</b> — login- or Referer-protected files can't be fetched. <b>"Save individually"</b> is more likely to succeed.</li>
+      <li>Special pages like <span class="path">chrome://</span> or the Chrome Web Store are not supported.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  function setLang(l) {
+    document.getElementById("doc-ja").classList.toggle("show", l === "ja");
+    document.getElementById("doc-en").classList.toggle("show", l === "en");
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.classList.toggle("on", b.dataset.l === l);
+    });
+    document.documentElement.lang = l;
+  }
+  var ui = (chrome.i18n.getUILanguage() || "en").toLowerCase();
+  setLang(ui.indexOf("ja") === 0 ? "ja" : "en");
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { setLang(b.dataset.l); });
+  });
+</script>
 </body>
 </html>

@@ -14,6 +14,68 @@
     "epub", "mobi", "json", "xml",
   ];
 
+  // ---- 言語（ja / en） ----
+  const LANG = (chrome.i18n.getUILanguage() || "en").toLowerCase().startsWith("ja")
+    ? "ja"
+    : "en";
+  const STR = {
+    ja: {
+      pickerTip: "クリックで要素を選択 / Esc でキャンセル",
+      titlePrefix: "リンク一括DL — ",
+      srcSelection: "選択範囲",
+      srcSelectionEmpty: "選択範囲（テキスト未選択）",
+      srcElement: "選択した要素内",
+      onlyFiles: "ファイルのみ",
+      filterPh: "拡張子で絞込 例: pdf,zip",
+      selectAll: "全選択",
+      clear: "解除",
+      btnZip: "ZIPでまとめて",
+      btnInd: "個別に保存",
+      emptyNoLinks: "リンクが見つかりませんでした。",
+      emptyNoMatch: "条件に合うファイルがありません。「ファイルのみ」を外すと全リンクを表示します。",
+      titleClose: "閉じる",
+      titleHelp: "使い方を見る",
+      preparing: "準備中 …",
+      zipping: "ZIP生成中 …",
+      fetching: (d, t) => `取得中 ${d}/${t} …`,
+      saving: (d, t) => (t ? `保存中 ${d}/${t} …` : "保存中 …"),
+      err: (m) => "エラー: " + m,
+      zipFailAll: (f) => `ZIP失敗（全${f}件取得不可）。個別保存をお試しください。`,
+      zipPartial: (ok, f) => `ZIP作成 ✓ ${ok}件成功 / ${f}件は取得失敗`,
+      zipDone: (ok) => `ZIP作成 ✓ ${ok}件をまとめました`,
+      indDone: (ok, f) =>
+        `完了 ✓ ${ok}件保存（ダウンロード/link-downloader/）${f ? ` / 失敗${f}` : ""}`,
+    },
+    en: {
+      pickerTip: "Click an element to select / Esc to cancel",
+      titlePrefix: "Link DL — ",
+      srcSelection: "Selection",
+      srcSelectionEmpty: "Selection (no text selected)",
+      srcElement: "Picked element",
+      onlyFiles: "Files only",
+      filterPh: "Filter by ext, e.g. pdf,zip",
+      selectAll: "All",
+      clear: "None",
+      btnZip: "Download as ZIP",
+      btnInd: "Save individually",
+      emptyNoLinks: "No links found.",
+      emptyNoMatch: 'No matching files. Uncheck "Files only" to show all links.',
+      titleClose: "Close",
+      titleHelp: "How to use",
+      preparing: "Preparing …",
+      zipping: "Creating ZIP …",
+      fetching: (d, t) => `Fetching ${d}/${t} …`,
+      saving: (d, t) => (t ? `Saving ${d}/${t} …` : "Saving …"),
+      err: (m) => "Error: " + m,
+      zipFailAll: (f) => `ZIP failed (all ${f} files unreachable). Try saving individually.`,
+      zipPartial: (ok, f) => `ZIP created ✓ ${ok} ok / ${f} failed`,
+      zipDone: (ok) => `ZIP created ✓ bundled ${ok} files`,
+      indDone: (ok, f) =>
+        `Done ✓ saved ${ok} to Downloads/link-downloader/${f ? ` / failed ${f}` : ""}`,
+    },
+  };
+  const T = STR[LANG];
+
   function extOf(url) {
     try {
       const u = new URL(url, location.href);
@@ -91,7 +153,7 @@
     document.documentElement.appendChild(hl);
 
     const tip = document.createElement("div");
-    tip.textContent = "クリックで要素を選択 / Esc でキャンセル";
+    tip.textContent = T.pickerTip;
     Object.assign(tip.style, {
       position: "fixed",
       zIndex: "2147483647",
@@ -142,7 +204,7 @@
       if (el.matches && el.matches("a[href]")) anchors.push(el);
       anchors.push(...el.querySelectorAll("a[href]"));
       const links = collectFromAnchors(anchors);
-      showPanel(links, "選択した要素内");
+      showPanel(links, T.srcElement);
     }
 
     function onKey(e) {
@@ -219,23 +281,23 @@
     wrap.className = "wrap";
     wrap.innerHTML = `
       <div class="hd">
-        <b>リンク一括DL — ${sourceLabel}</b>
-        <span class="qm" title="使い方を見る">?</span>
-        <span class="x" title="閉じる">×</span>
+        <b>${T.titlePrefix}${sourceLabel}</b>
+        <span class="qm" title="${T.titleHelp}">?</span>
+        <span class="x" title="${T.titleClose}">×</span>
       </div>
       <div class="bar">
-        <label><input type="checkbox" class="onlyfiles" checked> ファイルのみ</label>
-        <input type="text" class="filter" placeholder="拡張子で絞込 例: pdf,zip" style="width:130px">
+        <label><input type="checkbox" class="onlyfiles" checked> ${T.onlyFiles}</label>
+        <input type="text" class="filter" placeholder="${T.filterPh}" style="width:130px">
         <span class="grow"></span>
-        <button class="all">全選択</button>
-        <button class="none">解除</button>
+        <button class="all">${T.selectAll}</button>
+        <button class="none">${T.clear}</button>
       </div>
       <div class="list"></div>
       <div class="status"></div>
       <div class="ft">
         <span class="count"></span>
-        <button class="zip">ZIPでまとめて</button>
-        <button class="ind">個別に保存</button>
+        <button class="zip">${T.btnZip}</button>
+        <button class="ind">${T.btnInd}</button>
       </div>
     `;
     shadow.appendChild(wrap);
@@ -266,10 +328,7 @@
       if (vis.length === 0) {
         const d = document.createElement("div");
         d.className = "empty";
-        d.textContent =
-          links.length === 0
-            ? "リンクが見つかりませんでした。"
-            : "条件に合うファイルがありません。「ファイルのみ」を外すと全リンクを表示します。";
+        d.textContent = links.length === 0 ? T.emptyNoLinks : T.emptyNoMatch;
         listEl.appendChild(d);
       }
       for (const l of vis) {
@@ -328,9 +387,9 @@
       chrome.runtime.onMessage.addListener((m) => {
         if (!m || m.type !== "DL_PROGRESS" || !window.__linkDL_status) return;
         const s = window.__linkDL_status;
-        if (m.phase === "fetch") s(`取得中 ${m.done}/${m.total} …`);
-        else if (m.phase === "zipping") s("ZIP生成中 …");
-        else if (m.phase === "list") s(`保存中 ${m.done}/${m.total} …`);
+        if (m.phase === "fetch") s(T.fetching(m.done, m.total));
+        else if (m.phase === "zipping") s(T.zipping);
+        else if (m.phase === "list") s(T.saving(m.done, m.total));
       });
     }
     window.__linkDL_status = setStatus;
@@ -361,21 +420,21 @@
       const urls = checkedUrls();
       if (!urls.length) return;
       setBusy(true);
-      setStatus("準備中 …");
+      setStatus(T.preparing);
       chrome.runtime.sendMessage(
         { type: "DOWNLOAD_ZIP", urls, zipName: zipName() },
         (resp) => {
           setBusy(false);
           if (chrome.runtime.lastError) {
-            setStatus("エラー: " + chrome.runtime.lastError.message);
+            setStatus(T.err(chrome.runtime.lastError.message));
             return;
           }
           if (!resp.zipped) {
-            setStatus(`ZIP失敗（全${resp.fail}件取得不可）。個別保存をお試しください。`);
+            setStatus(T.zipFailAll(resp.fail));
           } else if (resp.fail > 0) {
-            setStatus(`ZIP作成 ✓ ${resp.ok}件成功 / ${resp.fail}件は取得失敗`);
+            setStatus(T.zipPartial(resp.ok, resp.fail));
           } else {
-            setStatus(`ZIP作成 ✓ ${resp.ok}件をまとめました`);
+            setStatus(T.zipDone(resp.ok));
           }
         }
       );
@@ -385,14 +444,14 @@
       const urls = checkedUrls();
       if (!urls.length) return;
       setBusy(true);
-      setStatus("保存中 …");
+      setStatus(T.saving());
       chrome.runtime.sendMessage({ type: "DOWNLOAD_LIST", urls }, (resp) => {
         setBusy(false);
         if (chrome.runtime.lastError) {
-          setStatus("エラー: " + chrome.runtime.lastError.message);
+          setStatus(T.err(chrome.runtime.lastError.message));
           return;
         }
-        setStatus(`完了 ✓ ${resp.ok}件保存（ダウンロード/link-downloader/）${resp.fail ? ` / 失敗${resp.fail}` : ""}`);
+        setStatus(T.indDone(resp.ok, resp.fail));
       });
     });
 
@@ -426,9 +485,9 @@
     if (mode === "selection") {
       const links = collectFromSelection();
       if (links === null) {
-        showPanel([], "選択範囲（テキスト未選択）");
+        showPanel([], T.srcSelectionEmpty);
       } else {
-        showPanel(links, "選択範囲");
+        showPanel(links, T.srcSelection);
       }
     } else if (mode === "picker") {
       startPicker();

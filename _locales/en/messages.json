@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Link File Downloader"
+  },
+  "appDesc": {
+    "message": "Batch-download PDFs and other files from links inside a text selection or a picked page element."
+  }
+}
