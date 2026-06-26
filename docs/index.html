@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リンク一括ダウンローダー / Link File Downloader</title>
+<meta name="description" content="選択範囲や指定要素内のリンクから、PDFなどのファイルをまとめてダウンロードするChrome拡張機能。">
+<style>
+  :root { --blue:#1f6feb; --ink:#16243a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 16px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; color: var(--ink);
+    background: #f6f8fb; }
+  .hero { background: linear-gradient(135deg,#1f6feb,#1c3fa6); color: #fff;
+    padding: 64px 20px 56px; text-align: center; }
+  .ic { width: 80px; height: 80px; border-radius: 20px; background: #fff; margin: 0 auto 22px;
+    display: flex; align-items: center; justify-content: center; }
+  .hero h1 { font-size: 34px; font-weight: 800; }
+  .hero .en { font-size: 16px; opacity: .85; margin-top: 4px; font-weight: 500; }
+  .hero p { font-size: 18px; opacity: .95; margin-top: 16px; }
+  .links { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { background: #fff; color: var(--blue); text-decoration: none; font-weight: 700;
+    padding: 11px 22px; border-radius: 9px; font-size: 15px; }
+  .btn.ghost { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.5); }
+  main { max-width: 760px; margin: 0 auto; padding: 44px 20px 80px; }
+  h2 { font-size: 22px; margin: 0 0 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #fff; border: 1px solid #e6eaf2; border-radius: 12px; padding: 18px 20px; }
+  .card h3 { font-size: 17px; margin-bottom: 6px; color: var(--blue); }
+  .card p { font-size: 14.5px; color: #4a5568; }
+  .foot { text-align: center; color: #8a93a3; font-size: 13px; padding: 30px 20px 60px; }
+  .foot a { color: #6b7484; }
+  @media (max-width: 600px){ .grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="ic">
+    <svg width="46" height="46" viewBox="0 0 22 22"><g fill="#1f6feb">
+      <rect x="9.3" y="3" width="3.4" height="9.2"/><path d="M5.4 10 L16.6 10 L11 17.4 Z"/>
+      <rect x="4.8" y="18.2" width="12.4" height="1.8"/></g></svg>
+  </div>
+  <h1>リンク一括ダウンローダー</h1>
+  <div class="en">Link File Downloader</div>
+  <p>ページのリンクから、PDFなどのファイルをまとめてダウンロード。</p>
+  <div class="links">
+    <a class="btn ghost" href="help.html">使い方 / How to use</a>
+    <a class="btn ghost" href="https://github.com/krakenmagic/link-file-downloader">GitHub</a>
+    <a class="btn ghost" href="privacy.html">プライバシー</a>
+  </div>
+</div>
+
+<main>
+  <h2>主な機能</h2>
+  <div class="grid">
+    <div class="card"><h3>📝 選択範囲から</h3><p>リンクを含む範囲をドラッグ選択し、その中のリンクだけを収集。</p></div>
+    <div class="card"><h3>🎯 要素を選んで</h3><p>ページのブロックをクリックすると、その中の全リンクを収集。</p></div>
+    <div class="card"><h3>📦 ZIPでまとめて</h3><p>選んだファイルを1つのZIPに。保存ダイアログは1回だけ。</p></div>
+    <div class="card"><h3>📁 個別に保存</h3><p>専用フォルダへ直接保存。ファイル名の重複も自動で回避。</p></div>
+  </div>
+
+  <h2 style="margin-top:36px">Features (EN)</h2>
+  <div class="grid">
+    <div class="card"><h3>From a selection</h3><p>Drag-select a range and collect only the links inside it.</p></div>
+    <div class="card"><h3>Pick an element</h3><p>Click a block on the page to collect all links within it.</p></div>
+    <div class="card"><h3>Download as ZIP</h3><p>Bundle selected files into a single ZIP — only one save dialog.</p></div>
+    <div class="card"><h3>Save individually</h3><p>Save straight into a dedicated folder, with auto de-duplication.</p></div>
+  </div>
+</main>
+
+<div class="foot">
+  © 2026 krakenmagic ·
+  <a href="https://github.com/krakenmagic/link-file-downloader">Source</a> ·
+  <a href="https://github.com/krakenmagic/link-file-downloader/issues">Support</a> ·
+  <a href="privacy.html">Privacy Policy</a>
+</div>
+</body>
+</html>
