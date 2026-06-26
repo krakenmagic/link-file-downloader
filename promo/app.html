@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 800px; overflow: hidden;
+    font-family: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; }
+  body { background: radial-gradient(120% 100% at 50% 0%, #eaf1fc 0%, #f4f7fb 55%, #eef2f8 100%);
+    display: flex; flex-direction: column; align-items: center; }
+
+  /* キャプション */
+  .cap { margin-top: 30px; display: flex; align-items: center; gap: 12px; padding: 0 40px; }
+  .cap .ic { width: 40px; height: 40px; border-radius: 9px; background: #1f6feb;
+    display: flex; align-items: center; justify-content: center; flex: none; }
+  .cap h1 { font-size: 25px; font-weight: 800; color: #16243a; letter-spacing: .2px; }
+
+  /* ブラウザ枠 */
+  .win { margin-top: 22px; width: 1180px; height: 632px; background: #fff;
+    border-radius: 14px; box-shadow: 0 24px 60px rgba(30,60,110,.22), 0 4px 14px rgba(0,0,0,.08);
+    overflow: hidden; position: relative; border: 1px solid #dde4ef; }
+  .tb { height: 46px; background: #f1f3f6; border-bottom: 1px solid #e2e6ec;
+    display: flex; align-items: center; gap: 8px; padding: 0 14px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .addr { flex: 1; height: 26px; background: #fff; border: 1px solid #e0e4ea; border-radius: 14px;
+    margin: 0 10px; display: flex; align-items: center; padding: 0 14px; color: #5a6473; font-size: 13px; }
+  .tbic { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center;
+    justify-content: center; }
+  .tbic.on { background: #e4ecfb; outline: 2px solid #1f6feb; }
+
+  /* ページ本体 */
+  .page { position: absolute; top: 46px; left: 0; right: 0; bottom: 0; background: #fff; overflow: hidden; }
+  .page-inner { padding: 30px 40px; }
+  .crumb { color: #8a93a3; font-size: 13px; margin-bottom: 6px; }
+  .ptitle { font-size: 24px; font-weight: 800; color: #1c2536; margin-bottom: 4px; }
+  .pdesc { color: #6b7484; font-size: 14px; margin-bottom: 22px; }
+  .doc { display: flex; align-items: center; gap: 14px; padding: 13px 16px; border: 1px solid #eef0f4;
+    border-radius: 10px; margin-bottom: 10px; max-width: 620px; }
+  .doc .fi { width: 34px; height: 34px; border-radius: 7px; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 10px; font-weight: 800; flex: none; }
+  .fi.pdf { background: #e2574c; } .fi.doc { background: #2b7cd3; } .fi.xls { background: #1e9e5a; }
+  .doc .nm { flex: 1; font-size: 15px; color: #26303f; font-weight: 600; }
+  .doc .dl { color: #1f6feb; font-size: 13px; font-weight: 700; text-decoration: none; }
+  /* 選択ハイライト */
+  .sel { background: #d7e6ff7a; }
+
+  /* ピッカー */
+  .pick-box { position: absolute; border: 2px solid #3884ff; background: rgba(56,132,255,.18);
+    border-radius: 4px; }
+  .pick-tip { position: absolute; background: #111; color: #fff; font-size: 13px; padding: 6px 12px;
+    border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.3); white-space: nowrap; }
+
+  /* ===== パネル（content.js と同一意匠） ===== */
+  .panel { position: absolute; width: 420px; background: #fff; border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.25); overflow: hidden; border: 1px solid #e2e2e2;
+    font-size: 13px; color: #1a1a1a; }
+  .p-hd { padding: 10px 12px; background: #1f6feb; color: #fff; display: flex; align-items: center; gap: 8px; }
+  .p-hd b { font-size: 14px; flex: 1; }
+  .p-hd .qm { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .p-hd .x { font-size: 18px; }
+  .p-bar { padding: 8px 12px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #eee;
+    flex-wrap: wrap; }
+  .p-bar label { display: flex; align-items: center; gap: 4px; }
+  .p-bar .grow { flex: 1; }
+  .p-bar input[type=text] { width: 132px; padding: 3px 6px; border: 1px solid #ccc; border-radius: 5px;
+    font: inherit; color: #888; }
+  .p-bar .b { border: none; background: #f0f0f0; border-radius: 5px; padding: 4px 9px; font-size: 12px;
+    cursor: default; color: #333; }
+  .p-list { max-height: 300px; }
+  .p-row { display: flex; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #f2f2f2; align-items: center; }
+  .p-row .cbx { width: 14px; height: 14px; border: 1.5px solid #1f6feb; border-radius: 3px;
+    background: #1f6feb; position: relative; flex: none; }
+  .p-row .cbx::after { content: "✓"; color: #fff; font-size: 10px; position: absolute; top: -2px; left: 1px; }
+  .p-row .cbx.off { background: #fff; }
+  .p-meta { flex: 1; min-width: 0; overflow: hidden; }
+  .p-meta .t { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-meta .u { color: #888; font-size: 11px; display: block; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap; }
+  .p-tag { background: #eef2ff; color: #3b53c4; border-radius: 4px; padding: 0 6px; font-size: 11px;
+    font-weight: 800; text-transform: uppercase; flex: none; }
+  .p-status { padding: 9px 12px; border-top: 1px solid #eee; color: #1f6feb; font-size: 12.5px; font-weight: 600; }
+  .p-ft { padding: 10px 12px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; }
+  .p-ft .count { color: #555; font-size: 11px; }
+  .p-ft .grow { flex: 1; }
+  .p-ft .btn { border: none; border-radius: 7px; padding: 9px 12px; font-size: 13px; font-weight: 800; cursor: default; }
+  .p-ft .zip { background: #1f6feb; color: #fff; }
+  .p-ft .ind { background: #eef2ff; color: #1f6feb; }
+
+  /* ===== ポップアップ ===== */
+  .popup { position: absolute; width: 262px; background: #fff; border-radius: 12px;
+    box-shadow: 0 14px 40px rgba(20,40,80,.28); border: 1px solid #e3e8f0; overflow: hidden; }
+  .pp-hd { padding: 13px 15px 6px; font-size: 14px; font-weight: 800; color: #1a1a1a; }
+  .pp-sub { padding: 0 15px 11px; color: #7b8494; font-size: 11px; }
+  .pp-btns { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .pp-b { border-radius: 9px; padding: 11px 12px; font-weight: 700; font-size: 13px; color: #fff; background: #1f6feb; }
+  .pp-b.ghost { background: #eef2ff; color: #1f6feb; }
+  .pp-b .d { display: block; font-weight: 400; font-size: 11px; opacity: .85; margin-top: 2px; }
+  .pp-note { padding: 0 15px 13px; color: #9aa3b2; font-size: 10.5px; }
+  /* ポップアップを指す吹き出し矢印 */
+  .pp-arrow { position: absolute; width: 16px; height: 16px; background: #fff; transform: rotate(45deg);
+    border-left: 1px solid #e3e8f0; border-top: 1px solid #e3e8f0; }
+</style>
+</head>
+<body>
+<div class="cap">
+  <span class="ic">
+    <svg width="22" height="22" viewBox="0 0 22 22"><g fill="#fff">
+      <rect x="9.4" y="3" width="3.2" height="9"/><path d="M5.6 10 L16.4 10 L11 17 Z"/>
+      <rect x="5" y="18" width="12" height="1.6"/></g></svg>
+  </span>
+  <h1 id="cap"></h1>
+</div>
+
+<div class="win">
+  <div class="tb">
+    <span class="dot" style="background:#ff5f57"></span>
+    <span class="dot" style="background:#febc2e"></span>
+    <span class="dot" style="background:#28c840"></span>
+    <span class="addr" id="addr"></span>
+    <span class="tbic on">
+      <svg width="16" height="16" viewBox="0 0 22 22"><g fill="#1f6feb">
+        <rect x="9.4" y="3" width="3.2" height="9"/><path d="M5.6 10 L16.4 10 L11 17 Z"/>
+        <rect x="5" y="18" width="12" height="1.6"/></g></svg>
+    </span>
+  </div>
+  <div class="page">
+    <div class="page-inner" id="page"></div>
+    <div id="overlay"></div>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ja: {
+    cap: {
+      hero: "ページのリンクからPDFをまとめてダウンロード",
+      picker: "要素をクリックするだけ。中のリンクを自動収集",
+      popup: "「選択範囲」or「要素選択」— 2つの収集モード",
+      done: "ZIPで1ファイルに。保存ダイアログは1回だけ",
+    },
+    addr: "example.com/seminar/資料ダウンロード",
+    crumb: "ホーム / セミナー",
+    ptitle: "セミナー資料ダウンロード",
+    pdesc: "下記の資料をダウンロードいただけます。",
+    dl: "ダウンロード",
+    docs: [
+      ["pdf","PDF","第1回 セミナー資料.pdf"],
+      ["pdf","PDF","会社案内パンフレット.pdf"],
+      ["pdf","PDF","製品カタログ_2026.pdf"],
+      ["doc","DOC","申込書フォーマット.docx"],
+      ["xls","XLS","料金表.xlsx"],
+      ["pdf","PDF","利用規約.pdf"],
+    ],
+    panel: {
+      titleSel: "リンク一括DL — 選択範囲",
+      titleEl: "リンク一括DL — 選択した要素内",
+      onlyFiles: "ファイルのみ",
+      filterPh: "拡張子で絞込 例: pdf,zip",
+      all: "全選択", none: "解除",
+      zip: "ZIPでまとめて", ind: "個別に保存",
+      done: "ZIP作成 ✓ 6件をまとめました",
+    },
+    popup: {
+      hd: "リンク一括ダウンローダー",
+      sub: "ページ上のリンクからファイルをまとめて取得します。",
+      selT: "📝 選択範囲から取得", selD: "ページ上でテキストを選択してからクリック",
+      pickT: "🎯 要素を選んで取得", pickD: "クリックでブロックを指定し、その中のリンクを収集",
+      helpT: "❓ 使い方を見る", helpD: "操作方法・保存先設定のマニュアル",
+      note: "結果は右上のパネルに表示。チェックして保存。",
+    },
+    pickTip: "クリックで要素を選択 / Esc でキャンセル",
+  },
+  en: {
+    cap: {
+      hero: "Download all the PDFs from a page's links at once",
+      picker: "Just click an element — links inside are collected",
+      popup: "From a selection or a picked element — two modes",
+      done: "Bundle into one ZIP — only one save dialog",
+    },
+    addr: "example.com/seminar/downloads",
+    crumb: "Home / Seminar",
+    ptitle: "Seminar Document Downloads",
+    pdesc: "You can download the materials below.",
+    dl: "Download",
+    docs: [
+      ["pdf","PDF","Seminar_Session_1.pdf"],
+      ["pdf","PDF","Company_Brochure.pdf"],
+      ["pdf","PDF","Product_Catalog_2026.pdf"],
+      ["doc","DOC","Application_Form.docx"],
+      ["xls","XLS","Price_List.xlsx"],
+      ["pdf","PDF","Terms_of_Service.pdf"],
+    ],
+    panel: {
+      titleSel: "Link DL — Selection",
+      titleEl: "Link DL — Picked element",
+      onlyFiles: "Files only",
+      filterPh: "Filter by ext, e.g. pdf,zip",
+      all: "All", none: "None",
+      zip: "Download as ZIP", ind: "Save individually",
+      done: "ZIP created ✓ bundled 6 files",
+    },
+    popup: {
+      hd: "Link File Downloader",
+      sub: "Collect files from links on the page.",
+      selT: "📝 From selection", selD: "Select text on the page, then click",
+      pickT: "🎯 Pick an element", pickD: "Click a block to collect links inside it",
+      helpT: "❓ How to use", helpD: "Manual: usage & save-location setup",
+      note: "Results appear in the top-right panel. Check items and save.",
+    },
+    pickTip: "Click an element to select / Esc to cancel",
+  },
+};
+
+function docRow(d, selected) {
+  return `<div class="doc ${selected ? "sel" : ""}">
+    <span class="fi ${d[0]}">${d[1]}</span>
+    <span class="nm">${d[2]}</span>
+    <a class="dl" href="#">${T.dl} ↓</a>
+  </div>`;
+}
+
+function panelRows() {
+  return T.docs.map((d) => `
+    <div class="p-row">
+      <span class="cbx"></span>
+      <span class="p-meta"><span class="t">${d[2]}</span><span class="u">example.com/files/${d[2]}</span></span>
+      <span class="p-tag">${d[1].toLowerCase()}</span>
+    </div>`).join("");
+}
+
+function panel(title, opts) {
+  opts = opts || {};
+  return `<div class="panel" style="${opts.style||'top:18px; right:18px;'}">
+    <div class="p-hd"><b>${title}</b><span class="qm">?</span><span class="x">×</span></div>
+    <div class="p-bar">
+      <label><span class="cbx" style="width:13px;height:13px;"></span> ${T.panel.onlyFiles}</label>
+      <input type="text" value="" placeholder="${T.panel.filterPh}">
+      <span class="grow"></span>
+      <span class="b">${T.panel.all}</span><span class="b">${T.panel.none}</span>
+    </div>
+    <div class="p-list">${panelRows()}</div>
+    ${opts.status ? `<div class="p-status">${opts.status}</div>` : ""}
+    <div class="p-ft"><span class="count">6/6</span><span class="grow"></span>
+      <span class="btn zip">${T.panel.zip}</span><span class="btn ind">${T.panel.ind}</span></div>
+  </div>`;
+}
+
+let T, scene, lang;
+function render() {
+  const h = (location.hash || "#ja/hero").slice(1).split("/");
+  lang = h[0] === "en" ? "en" : "ja";
+  scene = h[1] || "hero";
+  T = I18N[lang];
+
+  document.getElementById("cap").textContent = T.cap[scene] || T.cap.hero;
+  document.getElementById("addr").textContent = T.addr;
+
+  // ページ本体（heroとdoneは先頭2件を選択ハイライト）
+  const selSet = (scene === "hero" || scene === "done") ? [0,1,2] : [];
+  let page = `<div class="crumb">${T.crumb}</div>
+    <div class="ptitle">${T.ptitle}</div>
+    <div class="pdesc">${T.pdesc}</div>`;
+  T.docs.forEach((d,i)=> page += docRow(d, selSet.includes(i)));
+  document.getElementById("page").innerHTML = page;
+
+  const ov = document.getElementById("overlay");
+  if (scene === "hero") {
+    ov.innerHTML = panel(T.panel.titleSel);
+  } else if (scene === "done") {
+    ov.innerHTML = panel(T.panel.titleSel, { status: T.panel.done });
+  } else if (scene === "picker") {
+    // 3番目の資料ブロックをハイライト
+    ov.innerHTML = `
+      <div class="pick-box" style="left:40px; top:150px; width:620px; height:60px;"></div>
+      <div class="pick-tip" style="left:50%; top:14px; transform:translateX(-50%);">${T.pickTip}</div>
+      ${panel(T.panel.titleEl, { style: "top:18px; right:18px;" })}`;
+  } else if (scene === "popup") {
+    const p = T.popup;
+    ov.innerHTML = `
+      <div class="pp-arrow" style="right:36px; top:-8px;"></div>
+      <div class="popup" style="right:14px; top:0px;">
+        <div class="pp-hd">${p.hd}</div>
+        <div class="pp-sub">${p.sub}</div>
+        <div class="pp-btns">
+          <div class="pp-b">${p.selT}<span class="d">${p.selD}</span></div>
+          <div class="pp-b">${p.pickT}<span class="d">${p.pickD}</span></div>
+          <div class="pp-b ghost">${p.helpT}<span class="d">${p.helpD}</span></div>
+        </div>
+        <div class="pp-note">${p.note}</div>
+      </div>`;
+  }
+}
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>
