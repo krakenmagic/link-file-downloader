@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>リンク一括ダウンローダー — 使い方</title>
+<style>
+  :root { --blue:#1f6feb; --bg:#f6f8fb; --ink:#1a1a1a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.7 system-ui, -apple-system, "Hiragino Sans", sans-serif; }
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+  header { background: var(--blue); color: #fff; padding: 28px 20px; }
+  header .inner { max-width: 760px; margin: 0 auto; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 6px 0 0; opacity: .9; font-size: 14px; }
+  h2 { font-size: 18px; margin: 34px 0 12px; padding-bottom: 6px;
+    border-bottom: 2px solid #e2e8f3; }
+  .card { background: #fff; border: 1px solid #e6eaf2; border-radius: 12px;
+    padding: 18px 20px; margin: 14px 0; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  ol, ul { margin: 8px 0; padding-left: 22px; }
+  li { margin: 5px 0; }
+  .badge { display: inline-block; background: #eef2ff; color: var(--blue);
+    font-weight: 700; border-radius: 6px; padding: 1px 8px; font-size: 13px; }
+  .tip { background: #fff8e6; border: 1px solid #ffe2a8; border-left: 5px solid #f5b50a;
+    border-radius: 8px; padding: 16px 18px; margin: 14px 0; }
+  .tip h3 { margin: 0 0 8px; font-size: 16px; color: #9a6b00; }
+  .warn { background: #fff0f0; border: 1px solid #ffd0d0; border-left: 5px solid #e25555; }
+  .warn h3 { color: #b02a2a; }
+  code, .path { background: #eef1f6; border-radius: 5px; padding: 1px 6px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+  .step-no { display:inline-flex; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--blue); color:#fff; font-size:13px; font-weight:700;
+    align-items:center; justify-content:center; margin-right:6px; }
+  .kbd { background:#fff; border:1px solid #ccc; border-bottom-width:2px;
+    border-radius:5px; padding:1px 7px; font-size:12px; font-family:ui-monospace,monospace; }
+  .muted { color:#777; font-size:13px; }
+  a { color: var(--blue); }
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <h1>リンク一括ダウンローダー</h1>
+    <p>選択範囲・指定要素内のリンクから、PDFなどのファイルをまとめて保存</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <h2>基本の使い方</h2>
+  <div class="card">
+    ツールバーの拡張アイコンをクリックすると、2つのモードが出ます。
+    <ol>
+      <li><span class="badge">📝 選択範囲から取得</span><br>
+        先にページ上でリンクを含む範囲を<b>ドラッグ選択</b>してから、このボタンを押します。選択範囲内のリンクだけを集めます。</li>
+      <li><span class="badge">🎯 要素を選んで取得</span><br>
+        押すとピッカーが起動。マウスを乗せると要素が青くハイライトされ、<b>クリック</b>でその要素（ブロック）内の全リンクを集めます。<span class="kbd">Esc</span> でキャンセル。</li>
+    </ol>
+    集めた結果は画面<b>右上のパネル</b>に一覧表示されます。
+  </div>
+
+  <h2>パネルの操作</h2>
+  <div class="card">
+    <ul>
+      <li><b>ファイルのみ</b> … pdf / zip / docx / jpg などの既知ファイルだけ表示（オフで全リンク表示）</li>
+      <li><b>拡張子で絞込</b> … <code>pdf,zip</code> のように入力するとその種類だけに絞れます</li>
+      <li><b>全選択 / 解除</b>、各行のチェックで保存対象を調整</li>
+      <li>パネル上部の青いバーを<b>ドラッグ</b>で移動できます</li>
+    </ul>
+  </div>
+
+  <h2>2つの保存方法</h2>
+  <div class="card">
+    <p><span class="step-no">A</span><b>ZIPでまとめて</b><br>
+      選んだファイルを1つのZIPにまとめて保存します。<b>保存ダイアログは1回だけ</b>。フォルダを1度選べば全部そこに入ります。</p>
+    <p><span class="step-no">B</span><b>個別に保存</b><br>
+      ダイアログを出さず、<span class="path">ダウンロード/link-downloader/</span> フォルダへ直接流し込みます。</p>
+  </div>
+
+  <div class="tip warn">
+    <h3>⚠️「個別に保存」で毎回ダイアログが出てしまうとき</h3>
+    <p>Chrome本体の設定で「保存場所を毎回確認する」がオンになっています。これは拡張側から変更できないため、<b>一度だけChrome設定でオフ</b>にしてください。</p>
+    <ol>
+      <li>アドレスバーに <code>chrome://settings/downloads</code> と入力して開く<br>
+        <span class="muted">（または ︙メニュー → 設定 → ダウンロード）</span></li>
+      <li><b>「ダウンロード前に各ファイルの保存場所を確認する」</b> のスイッチを <b>オフ</b> にする</li>
+      <li>必要なら「保存先」を好きなフォルダに設定</li>
+    </ol>
+    <p>以降は「個別に保存」を押すと、確認なしで <span class="path">ダウンロード/link-downloader/</span> に自動で入ります。</p>
+    <p class="muted">※ ZIP保存だけは仕様上ダイアログが1回出ます（保存先を選べるようにするため）。毎回同じ場所で良ければ上記設定オフで省略できます。</p>
+  </div>
+
+  <h2>うまくいかないとき</h2>
+  <div class="card">
+    <ul>
+      <li><b>リンクが0件</b> … そのページのリンクが <code>&lt;a href&gt;</code> ではなくJSボタンの可能性。別の範囲・要素を試してください。</li>
+      <li><b>ZIPが「全件取得失敗」</b> … ログイン必須・Referer必須のファイルは拡張のfetchがブロックされることがあります。その場合は<b>「個別に保存」</b>の方が成功しやすいです（ブラウザのCookieが効くため）。</li>
+      <li><b>大量・大容量</b> … ZIP化が重いときは選択を分割するか、個別保存を使ってください。</li>
+      <li><span class="path">chrome://</span> やChrome Web Storeなど特別なページでは動作しません。</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top:30px">リンク一括ダウンローダー v1.1 — 開発者モードで読み込み済みのローカル拡張です。</p>
+</div>
+</body>
+</html>
