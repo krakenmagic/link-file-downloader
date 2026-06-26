@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { overflow: hidden; font-family: system-ui, -apple-system, "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", sans-serif; color: #fff; }
+  .tile { position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #1f6feb 0%, #2b5fd0 55%, #1c3fa6 100%); }
+  /* 背景の装飾 */
+  .tile::before { content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%;
+    background: rgba(255,255,255,.07); top: -160px; right: -120px; }
+  .tile::after { content: ""; position: absolute; width: 360px; height: 360px; border-radius: 50%;
+    background: rgba(255,255,255,.05); bottom: -180px; left: -80px; }
+  .ic { background: #fff; border-radius: 22%; display: flex; align-items: center; justify-content: center; }
+
+  /* ===== 小タイル 440x280 ===== */
+  .small { width: 440px; height: 280px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding: 24px; }
+  .small .ic { width: 76px; height: 76px; margin-bottom: 18px; }
+  .small .nm { font-size: 26px; font-weight: 800; letter-spacing: .3px; }
+  .small .tg { font-size: 15px; opacity: .92; margin-top: 8px; font-weight: 500; }
+  .small .chips { margin-top: 16px; display: flex; gap: 7px; }
+  .small .chip { background: rgba(255,255,255,.16); border-radius: 20px; padding: 4px 11px;
+    font-size: 11.5px; font-weight: 700; }
+
+  /* ===== マーキー 1400x560 ===== */
+  .marq { width: 1400px; height: 560px; display: flex; align-items: center; }
+  .marq .left { width: 760px; padding: 0 70px; position: relative; z-index: 2; }
+  .marq .ic { width: 96px; height: 96px; margin-bottom: 26px; }
+  .marq .nm { font-size: 45px; font-weight: 800; letter-spacing: .3px; line-height: 1.1; white-space: nowrap; }
+  .marq .tg { font-size: 22px; opacity: .95; margin-top: 18px; font-weight: 500; line-height: 1.5; max-width: 600px; }
+  .marq .bul { margin-top: 26px; display: flex; flex-direction: column; gap: 11px; }
+  .marq .bul div { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .marq .bul .ck { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.22);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 13px; flex: none; }
+  .marq .right { flex: 1; height: 100%; position: relative; }
+
+  /* マーキー右側の浮かぶUIパネル */
+  .demo { position: absolute; right: 70px; top: 50%; transform: translateY(-50%);
+    width: 400px; background: #fff; border-radius: 14px; box-shadow: 0 30px 70px rgba(10,30,80,.4);
+    overflow: hidden; color: #1a1a1a; }
+  .demo .d-hd { background: #1f6feb; color: #fff; padding: 12px 14px; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px; }
+  .demo .d-hd .grow { flex: 1; }
+  .demo .d-hd .o { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 11px; }
+  .demo .d-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid #f1f1f1; }
+  .demo .d-cb { width: 15px; height: 15px; border-radius: 3px; background: #1f6feb; position: relative; flex: none; }
+  .demo .d-cb::after { content: "✓"; color: #fff; font-size: 11px; position: absolute; top: -2px; left: 1.5px; }
+  .demo .d-nm { flex: 1; font-size: 13.5px; font-weight: 600; }
+  .demo .d-tag { background: #eef2ff; color: #3b53c4; border-radius: 4px; padding: 1px 7px;
+    font-size: 11px; font-weight: 800; }
+  .demo .d-ft { display: flex; gap: 8px; padding: 12px 14px; }
+  .demo .d-z { flex: 1.5; background: #1f6feb; color: #fff; border-radius: 8px; padding: 10px;
+    text-align: center; font-size: 13.5px; font-weight: 800; }
+  .demo .d-i { flex: 1; background: #eef2ff; color: #1f6feb; border-radius: 8px; padding: 10px;
+    text-align: center; font-size: 13.5px; font-weight: 800; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const ICON = `<span class="ic"><svg viewBox="0 0 22 22" width="0" height="0"></svg></span>`;
+function iconSvg(px){
+  return `<svg width="${px}" height="${px}" viewBox="0 0 22 22"><g fill="#1f6feb">
+    <rect x="9.3" y="3" width="3.4" height="9.2"/><path d="M5.4 10 L16.6 10 L11 17.4 Z"/>
+    <rect x="4.8" y="18.2" width="12.4" height="1.8"/></g></svg>`;
+}
+const I18N = {
+  ja: {
+    nm: "リンク一括ダウンローダー",
+    small: "リンクからPDFを<br>まとめてダウンロード",
+    chips: ["PDF", "ZIP", "画像", "一括DL"],
+    marqTg: "ページのリンクから、PDFなどのファイルを<br>まとめてダウンロード。",
+    bullets: ["選択範囲・要素からリンクを収集", "ZIPでまとめて1ファイルに保存", "日本語/英語対応・データ送信なし"],
+    demoTitle: "リンク一括DL",
+    rows: [["第1回 セミナー資料.pdf","PDF"],["製品カタログ_2026.pdf","PDF"],["料金表.xlsx","XLS"]],
+    zip: "ZIPでまとめて", ind: "個別に保存",
+  },
+  en: {
+    nm: "Link File Downloader",
+    small: "Batch-download files<br>from a page's links",
+    chips: ["PDF", "ZIP", "Images", "Batch"],
+    marqTg: "Download PDFs and other files from<br>a page's links — all at once.",
+    bullets: ["Collect links from a selection or element", "Bundle everything into one ZIP file", "JA / EN · no data sent anywhere"],
+    demoTitle: "Link DL",
+    rows: [["Seminar_Session_1.pdf","PDF"],["Product_Catalog_2026.pdf","PDF"],["Price_List.xlsx","XLS"]],
+    zip: "Download as ZIP", ind: "Save",
+  },
+};
+
+function render() {
+  const h = (location.hash || "#ja/small").slice(1).split("/");
+  const lang = h[0] === "en" ? "en" : "ja";
+  const size = h[1] === "marquee" ? "marquee" : "small";
+  const T = I18N[lang];
+  const root = document.getElementById("root");
+
+  if (size === "small") {
+    document.body.style.width = "440px"; document.body.style.height = "280px";
+    root.innerHTML = `<div class="tile small">
+      <div class="ic">${iconSvg(46)}</div>
+      <div class="nm">${T.nm}</div>
+      <div class="tg">${T.small}</div>
+      <div class="chips">${T.chips.map(c=>`<span class="chip">${c}</span>`).join("")}</div>
+    </div>`;
+  } else {
+    document.body.style.width = "1400px"; document.body.style.height = "560px";
+    const rows = T.rows.map(r=>`<div class="d-row"><span class="d-cb"></span>
+      <span class="d-nm">${r[0]}</span><span class="d-tag">${r[1].toLowerCase()}</span></div>`).join("");
+    root.innerHTML = `<div class="tile marq">
+      <div class="left">
+        <div class="ic">${iconSvg(58)}</div>
+        <div class="nm">${T.nm}</div>
+        <div class="tg">${T.marqTg}</div>
+        <div class="bul">${T.bullets.map(b=>`<div><span class="ck">✓</span>${b}</div>`).join("")}</div>
+      </div>
+      <div class="right">
+        <div class="demo">
+          <div class="d-hd"><b>${T.demoTitle}</b><span class="grow"></span><span class="o">?</span><span style="font-size:17px">×</span></div>
+          ${rows}
+          <div class="d-ft"><span class="d-z">${T.zip}</span><span class="d-i">${T.ind}</span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>
